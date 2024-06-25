@@ -205,7 +205,7 @@ TransformedBilinearCouplings[bilinearC_,U_]:=(R=Adj[U];
 Return[{R . bilinearC[[1]] . Transpose[R]//Simplify,R . bilinearC[[2]]//Simplify,R . bilinearC[[3]]//Simplify,bilinearC[[4]],bilinearC[[5]]}])
 
 
-(*************************** CS *************************** )
+(*************************** CS ***************************)
 
 
 (* ::Input::Initialization:: *)
@@ -276,6 +276,30 @@ an orthogonal similarity transformation of that block:*)
 LowBlockObfusc[matrix_]:=(obfusc=LowBlockObfuscAux[matrix]; obfusc . matrix . Transpose[obfusc]);
 
 
+(***** Isolating subalgebras using optimization *****)
+
+
+(*Generate algDim arbitrary linear combinations of a set of vectors v*)
+vprimeGeneral[v_,algDim_]:=Table[Sum[\[Beta][i,j]*v[[j]],{j,1,Length[v]}],{i,1,algDim}]
+
+
+(*Cost function=Sum of square of equations which are to be solved*)
+(*If this function has a minimum with value 0 then the system of equations has a solution*)
+CostFunc[eqs_]:=Sum[e^2,{e,eqs}]//Chop
+
+
+(*Generating orthonormality constraint equations for a set of algDim arbitrary linear combinations of vectors v*)
+OrthonormEqs[v_,algDim_]:=(vp=vprimeGeneral[v,algDim];
+Join[Flatten[Table[vp[[i]] . vp[[j]]//Simplify//Chop,{i,1,algDim},{j,i+1,algDim}],1],
+Table[vp[[i]] . vp[[i]]-1//Simplify//Chop,{i,1,algDim}]])
+
+
+(*Equations for 3 orthonormal linear combinations forming the defining representation of so(3)*)
+so3Eqs[v_]:=(vp=vprimeGeneral[v,3];
+Flatten[Join[Flatten[Table[(2*Fprod[vp[[i]],vp[[j]]]-Sum[LeviCivitaTensor[3][[i,j,k]]*vp[[k]],{k,1,3}])//Simplify//Chop,{i,1,3},{j,i+1,3}],1],
+OrthonormEqs[v,3]]])
+
+
 (***** 4HDM specific functions *****)
 
 
@@ -309,7 +333,7 @@ id = idx[eig[[1]]];
 ev=Table[If[i>4,eig[[2,id[[i-4]]]],eig[[2,20+i]]],{i,1,10}])//Chop
 
 
-(*************************** CP *************************** )
+(*************************** CP ***************************)
 
 
 (*Manifestly CP2 conserving \[CapitalLambda] matrix*)
