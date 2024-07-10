@@ -6,7 +6,7 @@ algorithms
 introduced in the papers 
 
 - [Computable conditions for order-2 CP symmetry in NHDM potentials](https://arxiv.org/abs/2404.02004) 
-- []()
+- [Representation-Theoretical Characterization of Canonical Custodial Symmetry in NHDM Potentials](https://arxiv.org/abs/2407.05085)
 
 can be implemented.
 
