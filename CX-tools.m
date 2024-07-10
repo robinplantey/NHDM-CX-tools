@@ -139,12 +139,10 @@ RootSys[H_,Ea_]:=Table[1/2 Tr[ConjugateTranspose[X] . Comm[h,X]],{X,Ea},{h,H}]//
 (*!! BUG: Sometimes returns more than r vectors !!*)
 (* This bug inherited by all functions below *)
 SimpleRootsVec[RootSystem_]:=(r=Dimensions[RootSystem][[2]];
-n=RandomReal[{-1,1},r]//Normalize;Rplus=Select[RootSystem,# . n>0&];
-Nvec=Length[Rplus];SimpleRoots={};
-pairs=Flatten[Table[{i,j},{i,1,Nvec},{j,i+1,Nvec}],1];
-Do[Decomp=False;For[k=1,k<=Nvec (Nvec-1)/2,k++,If[x==Chop[Rplus[[pairs[[k]][[1]]]]+Rplus[[pairs[[k]][[2]]]]],Decomp=True]];
-If[Not[Decomp],AppendTo[SimpleRoots,x]],{x,Rplus}];
-SimpleRoots)
+n=RandomReal[{-1,1},r]//Normalize;
+Rplus=Select[RootSystem, # . n>0&];
+Print[180/Pi Table[VectorAngle[r,n],{r,Rplus}]];
+Pick[Rplus, Table[NoneTrue[Subsets[Rplus,{2}],r==Chop[#[[1]]+#[[2]]]&],{r,Rplus}]])
 
 
 (*Returns a set of positive simple roots for an algebra given a basis*)
